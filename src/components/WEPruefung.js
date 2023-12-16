@@ -90,23 +90,21 @@ export default function WEPruefung(username, props) {
   const [countio, setCountio] = useState(0);
   const [countnio, setCountnio] = useState(0);
   const [countemesswerte, setCountemesswerte] = useState(0);
-  const [preufplanposList, setPreufplanposList] = useState();
+  const [wareneingangsposlist, seWareneingangsposlist] = useState();
 
   const getPruefplanPosList = useCallback(() => {
-    fetch(variables.API_URL + "pruefplanpos")
+    fetch(variables.API_URL + "wareneingangspositionen")
       .then((response) => response.json())
       .then((data) => {
-        var pruefplanListe = [];
-        data.forEach((xPruefplaposItem) => {
-          if (
-            xPruefplaposItem.IDPruefplan == username.selectedwelist.IDPruefplan
-          ) {
-            pruefplanListe.push(xPruefplaposItem);
+        var weposlist = [];
+        data.forEach((xwepositem) => {
+          if (xwepositem.IDPruefplan == username.selectedwelist.IDPruefplan) {
+            weposlist.push(xwepositem);
           }
-          setPreufplanposList(pruefplanListe);
-          setObereToleranz(pruefplanListe[0].Oberetoleranz);
-          setUntereToleranz(pruefplanListe[0].Unteretoleranz);
-          SetMessmittel(pruefplanListe[0].Messmittel);
+          seWareneingangsposlist(weposlist);
+          setObereToleranz(weposlist[0].Oberetoleranz);
+          setUntereToleranz(weposlist[0].Unteretoleranz);
+          SetMessmittel(weposlist[0].Messmittel);
         });
       });
   }, []);
@@ -296,8 +294,8 @@ export default function WEPruefung(username, props) {
   );
   const CardMesswerteingabe = (
     <Card sx={{ minHeight: 437 }}>
-      {preufplanposList &&
-        preufplanposList.map((item) => (
+      {wareneingangsposlist &&
+        wareneingangsposlist.map((item) => (
           <TextField
             key={item.id}
             label="Prüfmerkmal"
@@ -339,8 +337,8 @@ export default function WEPruefung(username, props) {
               });
             }}
           />
-          {preufplanposList &&
-            preufplanposList.map((item) => (
+          {wareneingangsposlist &&
+            wareneingangsposlist.map((item) => (
               <FormHelperText id="outlined-weight-helper-text" key={item.id}>
                 UT: {item.Unteretoleranz.toFixed(2)}
               </FormHelperText>
@@ -427,7 +425,7 @@ export default function WEPruefung(username, props) {
         obereToleranz={obereToleranz}
         untereToleranz={untereToleranz}
         messwertlist={state.messwertlist}
-        preufplanposList={preufplanposList}
+        wareneingangsposlist={wareneingangsposlist}
         AnzahlMesswerte={state.id}
       ></LineChart>
     </Card>
@@ -505,7 +503,7 @@ export default function WEPruefung(username, props) {
             OnClose={() => setIsOpen(false)}
             WENummer={username.selectedwelist.WENummer}
             AQLStichprobenmenge={username.selectedwelist.AQLStichprobenmenge}
-            preufplanposList={preufplanposList}
+            wareneingangsposlist={wareneingangsposlist}
             AQLAnnahmefehlermenge={
               username.selectedwelist.AQLAnnahmefehlermenge
             }
