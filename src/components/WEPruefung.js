@@ -1,12 +1,11 @@
-import { Container, Divider } from "@mui/material";
-import React, { PureComponent, useState, useCallback, useEffect } from "react";
+import { Divider } from "@mui/material";
+import React, { useState, useCallback, useEffect } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -17,7 +16,7 @@ import { variables } from "../variables";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Avatar from "@mui/material/Avatar";
-import { deepOrange, red, green } from "@mui/material/colors";
+import { deepOrange } from "@mui/material/colors";
 import Pruefentscheid from "../pages/Pruefentscheid";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -26,14 +25,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-function createInitialState(username) {
+function createInitialState() {
   const initialTodos = [];
-  // for (let i = 0; i < 50; i++) {
-  //   initialTodos.push({
-  //     id: i,
-  //     text: username + "'s task #" + (i + 1),
-  //   });
-  // }
   return {
     messwert: "",
     messwertlist: initialTodos,
@@ -98,13 +91,12 @@ export default function WEPruefung(username, props) {
       .then((data) => {
         var weposlist = [];
         data.forEach((xwepositem) => {
-          if (xwepositem.IDPruefplan == username.selectedwelist.IDPruefplan) {
+          if (
+            xwepositem.IDWareneingang == username.selectedwelist.IDWareneingang
+          ) {
             weposlist.push(xwepositem);
           }
           seWareneingangsposlist(weposlist);
-          setObereToleranz(weposlist[0].Oberetoleranz);
-          setUntereToleranz(weposlist[0].Unteretoleranz);
-          SetMessmittel(weposlist[0].Messmittel);
         });
       });
   }, []);
@@ -278,13 +270,16 @@ export default function WEPruefung(username, props) {
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
-                <TextField
-                  id="outlined-basic"
-                  label="Messmittel"
-                  variant="filled"
-                  fullWidth
-                  value={messmittel}
-                />
+                {wareneingangsposlist &&
+                  wareneingangsposlist.map((item) => (
+                    <TextField
+                      id="outlined-basic"
+                      label="Messmittel"
+                      variant="filled"
+                      fullWidth
+                      value={item.Messmittel}
+                    />
+                  ))}
               </Grid>
             </Grid>
           </Grid>
@@ -307,11 +302,17 @@ export default function WEPruefung(username, props) {
       <Divider sx={{ marginTop: 1 }}></Divider>
       <Grid>
         <div>
-          <FormHelperText id="outlined-weight-helper-text">
+          {wareneingangsposlist &&
+            wareneingangsposlist.map((item) => (
+              <FormHelperText id="outlined-weight-helper-text" key={item.id}>
+                OT: {item.Oberetoleranz.toFixed(2)}
+              </FormHelperText>
+            ))}
+          {/* <FormHelperText id="outlined-weight-helper-text">
             OT: {obereToleranz.toFixed(2)}
-          </FormHelperText>
-          {/* {preufplanposList &&
-            preufplanposList.map((item) => (
+          </FormHelperText> */}
+          {/* {wareneingangsposlist &&
+            wareneingangsposlist.map((item) => (
               <FormHelperText id="outlined-weight-helper-text" key={item.id}>
                 OT: {item.Oberetoleranz.toFixed(2)}
               </FormHelperText>
@@ -430,17 +431,6 @@ export default function WEPruefung(username, props) {
       ></LineChart>
     </Card>
   );
-  // const CardMesswertTabelle = (
-  //   <Card sx={4}>
-  //     <ul>
-  //       {state.messwertlist.map((item) => (
-  //         <li key={item.id}>{`Messwert ${item.id + 1}: ${parseFloat(
-  //           item.text
-  //         ).toFixed(2)} mm`}</li>
-  //       ))}
-  //     </ul>
-  //   </Card>
-  // );
   const rows = state.messwertlist;
   const CardMesswertTabelle1 = (
     <Card sx={4}>
