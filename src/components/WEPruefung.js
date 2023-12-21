@@ -10,7 +10,7 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useReducer } from "react";
-import LineChart from "../components/LineChartTest";
+import LineChartUrwertkarte from "./LineChartUrwertkarte";
 import Grid from "@mui/material/Unstable_Grid2";
 import { variables } from "../variables";
 import List from "@mui/material/List";
@@ -97,6 +97,8 @@ export default function WEPruefung(username, props) {
             weposlist.push(xwepositem);
           }
           seWareneingangsposlist(weposlist);
+          setObereToleranz(weposlist[0].Oberetoleranz);
+          setUntereToleranz(weposlist[0].Unteretoleranz);
         });
       });
   }, []);
@@ -422,13 +424,13 @@ export default function WEPruefung(username, props) {
           <Typography noWrap>{CountBad(state.messwertlist)}</Typography>
         </Stack>
       </Box>
-      <LineChart
+      <LineChartUrwertkarte
         obereToleranz={obereToleranz}
         untereToleranz={untereToleranz}
         messwertlist={state.messwertlist}
         wareneingangsposlist={wareneingangsposlist}
         AnzahlMesswerte={state.id}
-      ></LineChart>
+      ></LineChartUrwertkarte>
     </Card>
   );
   const rows = state.messwertlist;

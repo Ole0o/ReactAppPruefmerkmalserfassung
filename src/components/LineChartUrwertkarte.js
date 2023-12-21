@@ -10,7 +10,7 @@ import {
   ReferenceLine,
 } from "recharts";
 
-export default function LineChartTest(props) {
+export default function LineChartUrwertkarte(props) {
   debugger;
   const yoffest = 0.5;
 
