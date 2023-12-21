@@ -34,9 +34,9 @@ export default function Sidenav() {
       >
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            Majesty.Q
+            Webanwendung Prüfmerkmalserfassung
           </Typography>
-          <Typography variant="h11" noWrap component="div" marginLeft={192}>
+          <Typography variant="h11" noWrap component="div" marginLeft={160}>
             Version Stable 1.0
           </Typography>
         </Toolbar>

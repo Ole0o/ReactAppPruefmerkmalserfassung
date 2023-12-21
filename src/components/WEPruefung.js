@@ -93,7 +93,7 @@ export default function WEPruefung(username, props) {
   const [wareneingangsposlist, seWareneingangsposlist] = useState();
 
   const getPruefplanPosList = useCallback(() => {
-    fetch(variables.API_URL + "wareneingangspositionen")
+    fetch(variables.API_URL + "wareneingangspruefpositionen")
       .then((response) => response.json())
       .then((data) => {
         var weposlist = [];
@@ -207,7 +207,7 @@ export default function WEPruefung(username, props) {
           gutterBottom
           align="left"
         >
-          Datenerfassung Prüfschritte
+          Datenerfassung Prüfmerkmale
         </Typography>
         <Typography>
           <Grid container spacing={2} direction={"column"}>

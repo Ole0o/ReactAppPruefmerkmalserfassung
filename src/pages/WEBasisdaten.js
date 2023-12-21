@@ -26,7 +26,7 @@ import NeuWareneingang from "./NeuWareneingang";
 import RightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Tooltip from "@mui/material/Tooltip";
 
-export function WEBasisdaten(props) {
+export function WEBasisdaten() {
   const [welist, setWEList] = useState([]);
   const [selectedwelist, setSelectedWElist] = useState();
   const [isOpen, setisOpen] = useState(false);
