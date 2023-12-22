@@ -174,7 +174,7 @@ export function WEBasisdaten() {
         gutterBottom
         align="left"
       >
-        Wareneingangprüfung
+        Wareneingang
       </Typography>
       <Grid
         container

@@ -1,6 +1,4 @@
 import {
-  CartesianGrid,
-  Legend,
   Line,
   LineChart,
   Tooltip,
@@ -112,10 +110,8 @@ export default function LineChartUrwertkarte(props) {
           dataKey="text"
           stroke="#2196F3"
           strokeWidth={3}
-          // activeDot={{ r: 8 }}
           dot={<CustomizedDot />}
         />
-        {/* <CartesianGrid stroke="#ccc" strokeDasharray="5 5"/> */}
         <XAxis
           dataKey="id"
           allowDataOverflow={true}
@@ -129,13 +125,13 @@ export default function LineChartUrwertkarte(props) {
         />
         <YAxis
           domain={[minX, maxX]}
-          tickCount={25}
+          tickCount={24}
           label={{
             value: `Messwerte [mm]`,
             style: { textAnchor: "middle" },
             angle: -90,
             position: "left",
-            offset: 0,
+            offset: 2,
           }}
         />
         <YAxis
@@ -170,13 +166,6 @@ export default function LineChartUrwertkarte(props) {
           stroke="red"
           strokeWidth={2}
         />
-        {/* <ReferenceLine y={props.nennmaß} label={{
-            value: `NM`,
-            style: { textAnchor: "middle" },
-            angle: 0,
-            position: "right",
-            offset: 45
-          }}  stroke="grey"  strokeWidth={1} strokeDasharray="5 5"/> */}
         <ReferenceLine
           y={FindAverage(props.messwertlist)}
           label={{
@@ -217,7 +206,6 @@ export default function LineChartUrwertkarte(props) {
           strokeDasharray="3 4 5 2"
         />
         <Tooltip />
-        {/* <Legend /> */}
       </LineChart>
     </ResponsiveContainer>
   );

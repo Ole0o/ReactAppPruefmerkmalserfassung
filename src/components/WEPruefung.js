@@ -1,5 +1,7 @@
-import { Divider } from "@mui/material";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useReducer } from "react";
+import { variables } from "../variables";
+import LineChartUrwertkarte from "./LineChartUrwertkarte";
+import Pruefentscheid from "../pages/Pruefentscheid";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
 import TextField from "@mui/material/TextField";
@@ -9,15 +11,12 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { useReducer } from "react";
-import LineChartUrwertkarte from "./LineChartUrwertkarte";
 import Grid from "@mui/material/Unstable_Grid2";
-import { variables } from "../variables";
+import { Divider } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Avatar from "@mui/material/Avatar";
 import { deepOrange } from "@mui/material/colors";
-import Pruefentscheid from "../pages/Pruefentscheid";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -55,29 +54,29 @@ function reducer(state, action) {
   }
   throw Error("Unknown action: " + action.type);
 }
-export default function WEPruefung(username, props) {
+export default function WEPruefung(props) {
   const [obereToleranz, setObereToleranz] = useState(0);
   const [untereToleranz, setUntereToleranz] = useState(0);
   const [messmittel, SetMessmittel] = useState(0);
-  const [state, dispatch] = useReducer(reducer, username, createInitialState);
-  const [wenummer, setWENummer] = useState(username.selectedwelist.WENummer);
+  const [state, dispatch] = useReducer(reducer, props, createInitialState);
+  const [wenummer, setWENummer] = useState(props.selectedwelist.WENummer);
   const [artikelnummer, setArtikelnummer] = useState(
-    username.selectedwelist.ArtikelNummer
+    props.selectedwelist.ArtikelNummer
   );
   const [artikelsuchbegriff, setArtikelsuchbegriff] = useState(
-    username.selectedwelist.ArtikelSuchbegriff
+    props.selectedwelist.ArtikelSuchbegriff
   );
   const [pruefplannummer, setPruefplannummer] = useState(
-    username.selectedwelist.PruefplanNummer
+    props.selectedwelist.PruefplanNummer
   );
   const [zeichnungsnummer, setZeichnungsnummer] = useState(
-    username.selectedwelist.PruefplanZeichungsNummer
+    props.selectedwelist.PruefplanZeichungsNummer
   );
   const [index, setIndex] = useState(
-    username.selectedwelist.PruefplanZeichnungsIndex
+    props.selectedwelist.PruefplanZeichnungsIndex
   );
   const [stichprobenmenge, setStichprobenmenge] = useState(
-    username.selectedwelist.AQLStichprobenmenge
+    props.selectedwelist.AQLStichprobenmenge
   );
   const [isOpen, setIsOpen] = useState(false);
   const [countio, setCountio] = useState(0);
@@ -92,13 +91,13 @@ export default function WEPruefung(username, props) {
         var weposlist = [];
         data.forEach((xwepositem) => {
           if (
-            xwepositem.IDWareneingang == username.selectedwelist.IDWareneingang
+            xwepositem.IDWareneingang == props.selectedwelist.IDWareneingang
           ) {
             weposlist.push(xwepositem);
           }
           seWareneingangsposlist(weposlist);
-          setObereToleranz(weposlist[0].Oberetoleranz);
-          setUntereToleranz(weposlist[0].Unteretoleranz);
+          setObereToleranz(xwepositem.Oberetoleranz);
+          setUntereToleranz(xwepositem.Unteretoleranz);
         });
       });
   }, []);
@@ -201,7 +200,7 @@ export default function WEPruefung(username, props) {
           gutterBottom
           align="left"
         >
-          Datenerfassung Prüfmerkmale
+          Erfassung und Bewertung Prüfmerkmale
         </Typography>
         <Typography>
           <Grid container spacing={2} direction={"column"}>
@@ -310,15 +309,6 @@ export default function WEPruefung(username, props) {
                 OT: {item.Oberetoleranz.toFixed(2)}
               </FormHelperText>
             ))}
-          {/* <FormHelperText id="outlined-weight-helper-text">
-            OT: {obereToleranz.toFixed(2)}
-          </FormHelperText> */}
-          {/* {wareneingangsposlist &&
-            wareneingangsposlist.map((item) => (
-              <FormHelperText id="outlined-weight-helper-text" key={item.id}>
-                OT: {item.Oberetoleranz.toFixed(2)}
-              </FormHelperText>
-            ))} */}
           <TextField
             type="number"
             placeholder="Messwert"
@@ -434,7 +424,7 @@ export default function WEPruefung(username, props) {
     </Card>
   );
   const rows = state.messwertlist;
-  const CardMesswertTabelle1 = (
+  const CardMesswertTabelle = (
     <Card sx={4}>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 275 }} size="small" aria-label="a dense table">
@@ -479,7 +469,7 @@ export default function WEPruefung(username, props) {
           </Grid>
           <Grid container spacing={2} direction="row">
             <Grid item xs={4}>
-              {CardMesswertTabelle1}
+              {CardMesswertTabelle}
             </Grid>
             <Grid item xs={4}>
               {/* <ColorBox
@@ -493,20 +483,18 @@ export default function WEPruefung(username, props) {
           <Pruefentscheid
             open={isOpen}
             OnClose={() => setIsOpen(false)}
-            WENummer={username.selectedwelist.WENummer}
-            AQLStichprobenmenge={username.selectedwelist.AQLStichprobenmenge}
+            WENummer={props.selectedwelist.WENummer}
+            AQLStichprobenmenge={props.selectedwelist.AQLStichprobenmenge}
             wareneingangsposlist={wareneingangsposlist}
-            AQLAnnahmefehlermenge={
-              username.selectedwelist.AQLAnnahmefehlermenge
-            }
+            AQLAnnahmefehlermenge={props.selectedwelist.AQLAnnahmefehlermenge}
             AQLRueckweisungsfehlermenge={
-              username.selectedwelist.AQLRueckweisungsfehlermenge
+              props.selectedwelist.AQLRueckweisungsfehlermenge
             }
             Countio={countio}
             Countnio={countnio}
             Countemesswerte={countemesswerte}
-            Liefermengesoll={username.selectedwelist.LiefermengeSoll}
-            Liefermengeist={username.selectedwelist.LiefermengeIst}
+            Liefermengesoll={props.selectedwelist.LiefermengeSoll}
+            Liefermengeist={props.selectedwelist.LiefermengeIst}
           ></Pruefentscheid>
         </Grid>
       </Grid>
