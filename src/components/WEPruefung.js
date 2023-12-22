@@ -82,6 +82,7 @@ export default function WEPruefung(props) {
   const [countio, setCountio] = useState(0);
   const [countnio, setCountnio] = useState(0);
   const [countemesswerte, setCountemesswerte] = useState(0);
+  const [cp, setCP] = useState(0);
   const [wareneingangsposlist, seWareneingangsposlist] = useState();
 
   const getPruefplanPosList = useCallback(() => {
@@ -115,6 +116,9 @@ export default function WEPruefung(props) {
   }, [state.messwertlist]);
   useEffect(() => {
     setCountemesswerte(CountMesswerte(state.messwertlist));
+  }, [state.messwertlist]);
+  useEffect(() => {
+    setCP(Findcp(state.messwertlist));
   }, [state.messwertlist]);
   function ModalPruefentscheid(array) {
     if (array) {
@@ -190,6 +194,23 @@ export default function WEPruefung(props) {
       count = count + 1;
     }
     return count;
+  }
+
+  function Findcp(array) {
+    var avg = FindAverage(array);
+    if (avg && array.length > 2) {
+      var varianz = 0;
+      var sumvarianz = 0;
+      for (let index = 0; index < array.length; index++) {
+        sumvarianz += Math.pow(parseFloat(array[index].text) - avg, 2);
+      }
+      varianz = sumvarianz / (array.length - 1);
+      var standardanweichung = Math.sqrt(varianz);
+      if (standardanweichung) {
+        var cp = (obereToleranz - untereToleranz) / (6 * standardanweichung);
+      }
+      return cp;
+    }
   }
   const CardWEKopfdaten = (
     <Card sx={{ minWidth: 275 }}>
@@ -412,6 +433,10 @@ export default function WEPruefung(props) {
           <Typography noWrap>{CountGood(state.messwertlist)}</Typography>
           <Avatar sx={{ bgcolor: "red", width: 24, height: 24 }}>S</Avatar>
           <Typography noWrap>{CountBad(state.messwertlist)}</Typography>
+          <Avatar sx={{ bgcolor: deepOrange[500], width: 24, height: 24 }}>
+            Cp
+          </Avatar>
+          <Typography noWrap>{Findcp(state.messwertlist)}</Typography>
         </Stack>
       </Box>
       <LineChartUrwertkarte

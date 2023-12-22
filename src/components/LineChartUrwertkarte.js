@@ -42,18 +42,15 @@ export default function LineChartUrwertkarte(props) {
   }
 
   function Findcp(array) {
-    var sum = 0;
-    for (let index = 0; index < array.length; index++) {
-      sum += parseFloat(array[index].text);
-    }
-    var avg = sum / array.length;
-    if (avg) {
+    var avg = FindAverage(array);
+    if (avg && array.length > 2) {
       var varianz = 0;
+      var sumvarianz = 0;
       for (let index = 0; index < array.length; index++) {
-        varianz += Math.pow(parseFloat(array[index].text) - avg, 2);
+        sumvarianz += Math.pow(parseFloat(array[index].text) - avg, 2);
       }
-
-      var standardanweichung = Math.sqrt(varianz / (array.length - 1));
+      varianz = sumvarianz / (array.length - 1);
+      var standardanweichung = Math.sqrt(varianz);
       if (standardanweichung) {
         var cp =
           (props.obereToleranz - props.untereToleranz) /
@@ -62,6 +59,13 @@ export default function LineChartUrwertkarte(props) {
       return cp;
     }
   }
+  console.log(
+    "+3sigma: " + (FindAverage(props.messwertlist) + Findcp(props.messwertlist))
+  );
+  console.log(
+    "-3sigma: " + (FindAverage(props.messwertlist) - Findcp(props.messwertlist))
+  );
+
   const CustomizedDot = (xprops) => {
     const { cx, cy, value } = xprops;
 
