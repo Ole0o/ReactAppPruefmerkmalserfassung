@@ -17,11 +17,11 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 const CONTAINERLAYER = {
   position: "fixed",
   top: "6%",
-  left: "75%",
+  left: "70%",
   right: "0%",
   bottom: "0%",
   transform: "translate(-0%, -0%,)",
-  backgroundColor: "#fff",
+  backgroundColor: "#58F333",
   padding: "10px",
   zIndex: 1000,
   borderRadius: "8px",
@@ -55,7 +55,6 @@ export default function Pruefentscheid({
   }/${currentDate.getFullYear()}`;
 
   const [isPending, setisPending] = useState(false);
-
   const [wenummer, setWENummer] = useState(WENummer);
   const [pruefentscheiddatum, setPruefentscheidDatum] = useState(formattedDate);
   const [liefermengesoll, setLiefermengesoll] = useState(AQLStichprobenmenge);
@@ -132,7 +131,7 @@ export default function Pruefentscheid({
           <Grid item xs={12} sm={6} md={3}>
             <FormControl disabled variant="standard">
               <InputLabel htmlFor="component-disabled">
-                Prüfentscheiddatum
+                Datum Prüfentscheid
               </InputLabel>
               <Input
                 id="component-disabled"
@@ -146,20 +145,20 @@ export default function Pruefentscheid({
           <Grid item xs={12} sm={6} md={3}>
             <TextField
               id="outlined-basic"
-              label="Prüfplannummer"
+              label="Prüfentscheid"
               variant="outlined"
               fullWidth
-              value={"Nummer"}
+              value={"Annahme"}
               //   onChange={(e) => setNummer(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <TextField
               id="outlined-basic"
-              label="Prüfplanbezeichnung"
+              label="Grund"
               variant="outlined"
               fullWidth
-              value={"Bezeichnung1"}
+              value={"Fehlermenge < AQL-Rückweisungsmenge"}
               //   onChange={(e) => setBezeichnung1(e.target.value)}
             />
           </Grid>
