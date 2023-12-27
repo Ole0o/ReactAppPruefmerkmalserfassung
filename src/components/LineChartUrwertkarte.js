@@ -9,7 +9,6 @@ import {
 } from "recharts";
 
 export default function LineChartUrwertkarte(props) {
-  debugger;
   const yoffest = 0.5;
 
   const minX = Math.round(props.untereToleranz) - yoffest;

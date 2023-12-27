@@ -31,12 +31,24 @@ function createInitialState() {
     messwertlist: initialTodos,
   };
 }
+
 function reducer(state, action) {
   switch (action.type) {
     case "changed_messwert": {
+      if (action.nextMesswert >= 0) {
+        return {
+          messwert: action.nextMesswert,
+          messwertlist: state.messwertlist,
+        };
+      }
+
+      alert(
+        "Messwert darf nicht negativ sein! Ihre Eingabe: " + action.nextMesswert
+      );
+      action.nextMesswert = "";
       return {
         messwert: action.nextMesswert,
-        messwertlist: state.messwertlist,
+        messwertlist: [...state.messwertlist],
       };
     }
     case "added_messwert": {
@@ -82,7 +94,8 @@ export default function WEPruefung(props) {
   const [countio, setCountio] = useState(0);
   const [countnio, setCountnio] = useState(0);
   const [countemesswerte, setCountemesswerte] = useState(0);
-  const [cp, setCP] = useState(0);
+  const [cp, setCp] = useState(0);
+  const [cpk, setCpk] = useState(0);
   const [wareneingangsposlist, seWareneingangsposlist] = useState();
 
   const getPruefplanPosList = useCallback(() => {
@@ -118,8 +131,12 @@ export default function WEPruefung(props) {
     setCountemesswerte(CountMesswerte(state.messwertlist));
   }, [state.messwertlist]);
   useEffect(() => {
-    setCP(Findcp(state.messwertlist));
+    setCp(Findcp(state.messwertlist));
   }, [state.messwertlist]);
+  useEffect(() => {
+    setCpk(Findcpk(state.messwertlist));
+  }, [state.messwertlist]);
+
   function ModalPruefentscheid(array) {
     if (array) {
       var countMesserte = CountMesswerte(array);
@@ -129,12 +146,14 @@ export default function WEPruefung(props) {
     }
   }
   function FindAverage(array) {
-    var sum = 0;
-    for (let index = 0; index < array.length; index++) {
-      sum += parseFloat(array[index].text);
+    if (array.length > 1) {
+      var sum = 0;
+      for (let index = 0; index < array.length; index++) {
+        sum += parseFloat(array[index].text);
+      }
+      var avg = (sum / array.length).toFixed(4);
+      return avg;
     }
-    var avg = sum / array.length;
-    return avg;
   }
   function Findminimum(array) {
     var minimum = 0;
@@ -207,11 +226,45 @@ export default function WEPruefung(props) {
       varianz = sumvarianz / (array.length - 1);
       var standardanweichung = Math.sqrt(varianz);
       if (standardanweichung) {
-        var cp = (obereToleranz - untereToleranz) / (6 * standardanweichung);
+        var cp = (
+          (obereToleranz - untereToleranz) /
+          (6 * standardanweichung)
+        ).toFixed(2);
       }
       return cp;
     }
   }
+
+  function FindSd(array) {
+    var avg = FindAverage(array);
+    var varianz = 0;
+    var sumvarianz = 0;
+    for (let index = 0; index < array.length; index++) {
+      sumvarianz += Math.pow(parseFloat(array[index].text) - avg, 2);
+    }
+
+    varianz = sumvarianz / (array.length - 1);
+    if (varianz) {
+      var standardanweichung = Math.sqrt(varianz);
+    }
+
+    return standardanweichung;
+  }
+
+  function Findcpk(array) {
+    var avg = FindAverage(array);
+    var sd = FindSd(array);
+    var cpkarray = [];
+    if (avg && sd && array.length > 2) {
+      var cp1 = (avg - untereToleranz) / (3 * sd);
+      cpkarray.push(cp1);
+      var cp2 = (obereToleranz - avg) / (3 * sd);
+      cpkarray.push(cp2);
+      var cpk = Math.min(...cpkarray).toFixed(2);
+      return cpk;
+    }
+  }
+
   const CardWEKopfdaten = (
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
@@ -363,6 +416,13 @@ export default function WEPruefung(props) {
           onClick={() => {
             dispatch({ type: "added_messwert" });
           }}
+          onKeyUp={(ev) => {
+            ev.preventDefault();
+            console.log(`Pressed keyCode ${ev.key}`);
+            if (ev.key === 13) {
+              dispatch({ type: "added_messwert" });
+            }
+          }}
         >
           Speichern
         </Button>
@@ -423,20 +483,22 @@ export default function WEPruefung(props) {
       </Typography>
       <Box sx={{ flexGrow: 1, overflow: "hidden", px: 3, marginLeft: 10 }}>
         <Stack spacing={2} direction="row" alignItems="center">
-          <Avatar sx={{ bgcolor: deepOrange[500], width: 24, height: 24 }}>
+          <Avatar sx={{ bgcolor: deepOrange[500], width: 32, height: 32 }}>
             x̄
           </Avatar>
-          <Typography noWrap>
-            {FindAverage(state.messwertlist).toFixed(2)}
-          </Typography>
-          <Avatar sx={{ bgcolor: "#00c853", width: 24, height: 24 }}>G</Avatar>
+          <Typography noWrap>{FindAverage(state.messwertlist)}</Typography>
+          <Avatar sx={{ bgcolor: "#00c853", width: 32, height: 32 }}>G</Avatar>
           <Typography noWrap>{CountGood(state.messwertlist)}</Typography>
-          <Avatar sx={{ bgcolor: "red", width: 24, height: 24 }}>S</Avatar>
+          <Avatar sx={{ bgcolor: "red", width: 32, height: 32 }}>S</Avatar>
           <Typography noWrap>{CountBad(state.messwertlist)}</Typography>
-          <Avatar sx={{ bgcolor: deepOrange[500], width: 24, height: 24 }}>
+          <Avatar sx={{ bgcolor: deepOrange[500], width: 32, height: 32 }}>
             Cp
           </Avatar>
           <Typography noWrap>{Findcp(state.messwertlist)}</Typography>
+          <Avatar sx={{ bgcolor: deepOrange[500], width: 32, height: 32 }}>
+            Cpk
+          </Avatar>
+          <Typography noWrap>{Findcpk(state.messwertlist)}</Typography>
         </Stack>
       </Box>
       <LineChartUrwertkarte

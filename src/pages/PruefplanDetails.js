@@ -586,7 +586,7 @@ export function PreufplanDetails(props) {
               color="text.secondary"
               gutterBottom
             >
-              Prüfplanung Verwaltung
+              Prüfplanung-Details
             </Typography>
           </Grid>
         </Grid>
